@@ -8,40 +8,60 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-@CrossOrigin(origins="*")
+
 @RestController
-@RequestMapping("/bank")
+@CrossOrigin(origins = "http://localhost:4300")
+@RequestMapping("/rest")
 public class MyRestController {
 	@Autowired
-	TransactionsDao dao;
+	CustomerAccountDAO cadao;
+	@Autowired
+	CustomerTransactionDAO ctdao;
 	
-	@GetMapping("/transactions")
-	public List<Customer_Transactions> listalltransactions( )
-	{
-		return dao.findAll();
+	/**************************
+	 * Account related rest api
+	 **************************/
+	@GetMapping("/accounts")
+	public List<CustomerAccount> getAccounts(){
+		return cadao.findAll();
 	}
-	@PostMapping("/transactions")
-	public String insertTransactionRecord(@RequestBody Customer_Transactions t)
-	{
-		dao.save(t);
+	@GetMapping("/accounts/{cid}")
+	public List<CustomerAccount> getAccountById(@PathVariable("cid") int cid){
+		return cadao.getById(cid);
+		
+	}
+	@PostMapping("/accounts")
+	public CustomerAccount saveAccount(@RequestBody CustomerAccount ac){
+		return cadao.save(ac);
+	}
+	@DeleteMapping("/accounts/{accno}")
+	public String deleteCustomerAccount(@PathVariable("accno") String id) {
+		System.out.println(id);
+		cadao.deleteById(id);
+	return "delete ";
+	}
+
+	/******************************
+	 * Transaction related rest api
+	 ******************************/
+	
+	@GetMapping("/transaction/{from}")
+	public List<CustomerTransaction> getTransactionById(@PathVariable("from") String id){
+		return ctdao.findAllById(id);
+	}
+	@PostMapping("/transaction")
+	public String saveTransaction(@RequestBody CustomerTransaction ct) {
+		ctdao.save(ct);
 		return "success";
 	}
-	@DeleteMapping("/transactions/{tid}")
-	public String deleteRecord(@PathVariable("tid") int id)
-	{
-		if(dao.existsById(id))
-			dao.deleteById(id);
-		else
-			return "record does not exist";
-		return "Success";
+	@PutMapping("/transaction")
+	public String insertTransaction(@RequestBody CustomerTransaction ct) {
+		System.out.print("working");
+		ctdao.save(ct);
+		return "success";
 	}
-	@GetMapping("/viewtransactions/")
-	public List<Customer_Transactions> listtoptransactions( )
-	{ 
-		return dao.listtop10transactions();
 	}
-	
-}
