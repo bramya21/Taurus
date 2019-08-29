@@ -1,6 +1,9 @@
 package com.example.demo;
-
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,7 +24,8 @@ public class MyRestController {
 	CustomerAccountDAO cadao;
 	@Autowired
 	CustomerTransactionDAO ctdao;
-	
+	@Autowired
+	UserDAO udao;
 	/**************************
 	 * Account related rest api
 	 **************************/
@@ -63,5 +67,37 @@ public class MyRestController {
 		System.out.print("working");
 		ctdao.save(ct);
 		return "success";
+	}
+	@PostMapping("/login")
+	public String login(@RequestBody User user) throws NoSuchAlgorithmException {
+
+		Optional<User> optionalUser = udao.findById(user.getUserId());
+		if (optionalUser.isPresent()) {
+			User loggedUser = optionalUser.get();
+			/*
+			 * if(loggedUser.getPassword().equals(user.getPassword())) return "success";
+			 * else return "failure"; } return "failure";
+			 */
+
+			MessageDigest md = MessageDigest.getInstance("MD5");
+
+			// digest() method is called to calculate message digest
+			// of an input digest() return array of byte
+			byte[] messageDigest = md.digest(user.getPassword().getBytes());
+
+			// Convert byte array into signum representation
+			BigInteger no = new BigInteger(1, messageDigest);
+
+			// Convert message digest into hex value
+			String hashtext = no.toString(16);
+			while (hashtext.length() < 32) {
+				hashtext = "0" + hashtext;
+			}
+			System.out.println(hashtext);
+			if (hashtext.equals(loggedUser.getPassword()))
+				return "success";
+			return "failure";
+		}
+		return "failure";
 	}
 	}
