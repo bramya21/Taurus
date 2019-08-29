@@ -1,0 +1,14 @@
+<form method="POST" (ngSubmit)="onSubmit()">
+        <label>cid</label>
+        <input type="number" name="name" [(ngModel)]="account.cid">
+        <label>balance</label>
+        <input type="number" name="name" [(ngModel)]="account.balance">
+
+        <label>branch</label>
+        <input type="text" name="name" [(ngModel)]="account.branch">
+
+        <label>accountType</label>
+        <input type="text" name="name" [(ngModel)]="account.acctype">
+
+        <button class="btn-btnprimary">Submit Data</button>
+          </form>

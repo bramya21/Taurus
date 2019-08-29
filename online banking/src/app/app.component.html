@@ -1,0 +1,11 @@
+<a [routerLink] = "['products']" > Products </a>
+<a [routerLink] = "['/about','1001','akhila']">RouterLink with Params</a>
+<a [routerLink] = "[{outlets : {footerOutlet : ['services']}}]">
+    use named outlets
+</a>
+<hr>
+<button (click) = "onBtnClick()">click to navigate</button>
+<hr>
+
+<router-outlet></router-outlet>
+<router-outlet name= 'footerOutlet'></router-outlet>
